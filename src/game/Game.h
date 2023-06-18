@@ -5,7 +5,16 @@ class Game {
         Game();
         ~Game();
 
-        void init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen);
+        /*
+            * Initialize the game window
+            * @param title The title of the window
+            * @param xpos The x position of the window
+            * @param ypos The y position of the window
+            * @param width The width of the window
+            * @param height The height of the window
+            * @param fullscreen Whether or not the window should be fullscreen
+        */
+        void init(const char* title, int width, int height, bool fullscreen);
 
         void handleEvents();
 
