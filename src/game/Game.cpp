@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "SDL_render.h"
 #include <iostream>
 
 // SDL_Texture* playerTex;
@@ -54,11 +55,14 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
             std::cout << "Renderer created!" << std::endl;
         }
-
-        SDL_Surface* tmpSurface = IMG_Load("assets/knight.png");
+        
+        // Fetch the player texture
+        const char *file = "../assets/knight.png"; // This is always relative to the binary's location
+        SDL_Surface* tmpSurface = IMG_Load(file);
         if(!tmpSurface) {
             std::cout << "Failed to load image!" << std::endl;
         }
+
         playerTex = SDL_CreateTextureFromSurface(renderer, tmpSurface);
         std::cout << SDL_GetError() << std::endl;
         SDL_DestroySurface(tmpSurface);
@@ -99,7 +103,7 @@ void Game::render() {
     SDL_RenderClear(renderer);
 
     // Render stuff here
-    SDL_RenderTexture(renderer, playerTex, NULL, &destR);
+    SDL_RenderTexture(renderer, playerTex, NULL, NULL);
     std::cout << SDL_GetError() << std::endl;
 
     SDL_RenderPresent(renderer);

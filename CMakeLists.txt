@@ -7,3 +7,4 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_subdirectory(external)
 add_subdirectory(src)
+file(COPY src/assets DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/src")
