@@ -1,4 +1,5 @@
 #include "SDL.h"
+#include "SDL_image.h"
 
 class Game {
     public:
@@ -8,8 +9,6 @@ class Game {
         /*
             * Initialize the game window
             * @param title The title of the window
-            * @param xpos The x position of the window
-            * @param ypos The y position of the window
             * @param width The width of the window
             * @param height The height of the window
             * @param fullscreen Whether or not the window should be fullscreen
@@ -27,8 +26,10 @@ class Game {
         bool running();
 
 private:
+    int cnt = 0;
     bool isRunning;
     SDL_Window *window;
     SDL_Renderer *renderer;
-
+    SDL_Texture *playerTex;
+    SDL_FRect srcR, destR; 
 };

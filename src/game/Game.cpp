@@ -1,6 +1,9 @@
 #include "Game.h"
 #include <iostream>
 
+// SDL_Texture* playerTex;
+// SDL_Rect srcR, destR;
+
 
 Game::Game() {}
 
@@ -19,19 +22,19 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
     // Initialize timer
     bool success = true;
     if(SDL_Init(SDL_INIT_TIMER) < 0) {
-        std::cout << "SDL_Init failed!" << std::endl;
+        std::cout << "SDL init timer failed!" << std::endl;
         success = false;
     }
 
     // Initialize video
     if(SDL_Init(SDL_INIT_VIDEO) < 0) {
-        std::cout << "SDL_Init failed!" << std::endl;
+        std::cout << "SDL init video failed!" << std::endl;
         success = false;
     }
 
     // Initialize events
     if(SDL_Init(SDL_INIT_EVENTS) < 0) {
-        std::cout << "SDL_Init failed!" << std::endl;
+        std::cout << "SDL init events failed!" << std::endl;
         success = false;
     }
 
@@ -51,6 +54,14 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
             std::cout << "Renderer created!" << std::endl;
         }
+
+        SDL_Surface* tmpSurface = IMG_Load("assets/knight.png");
+        if(!tmpSurface) {
+            std::cout << "Failed to load image!" << std::endl;
+        }
+        playerTex = SDL_CreateTextureFromSurface(renderer, tmpSurface);
+        std::cout << SDL_GetError() << std::endl;
+        SDL_DestroySurface(tmpSurface);
         
         // Set isRunning to true
         isRunning = true;
@@ -77,12 +88,19 @@ void Game::handleEvents() {
     }
 }
 
-void Game::update() {}
+void Game::update() {
+    cnt++;
+    destR.h = 32;
+    destR.w = 32;
+    std::cout << cnt << std::endl;
+}
 
 void Game::render() {
     SDL_RenderClear(renderer);
 
     // Render stuff here
+    SDL_RenderTexture(renderer, playerTex, NULL, &destR);
+    std::cout << SDL_GetError() << std::endl;
 
     SDL_RenderPresent(renderer);
 }
