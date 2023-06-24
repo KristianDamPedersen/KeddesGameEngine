@@ -11,6 +11,8 @@ Game::Game() {}
 
 Game::~Game() {}
 
+SDL_Renderer *Game::renderer = nullptr;
+
 void Game::init(const char* title, int width, int height, bool fullscreen) {
     // Check for fullscreen flag
     int flags = 0;
@@ -59,8 +61,8 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
         
         // Fetch the player texture
         const char *file = "assets/knight.png"; // This is always relative to the binary's location
-        player = new GameObject(file, renderer, 0, 0);
-        enemy = new GameObject(file, renderer, 100, 100);
+        player = new GameObject(file, 0, 0);
+        enemy = new GameObject(file, 100, 100);
         
         
         // Set isRunning to true

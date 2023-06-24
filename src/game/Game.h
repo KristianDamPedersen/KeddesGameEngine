@@ -1,3 +1,4 @@
+#pragma once
 #include "SDL.h"
 #include "SDL_image.h"
 #include "TextureManager.h"
@@ -26,10 +27,11 @@ class Game {
 
         bool running();
 
+        static SDL_Renderer *renderer;
+
 private:
     int cnt = 0;
     bool isRunning;
     SDL_Window *window;
-    SDL_Renderer *renderer;
     SDL_FRect srcRect, destRect; 
 };

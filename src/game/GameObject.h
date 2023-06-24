@@ -1,7 +1,8 @@
+#pragma once
 #include "SDL.h"
 class GameObject {
     public: 
-        GameObject(const char* textureSheet, SDL_Renderer*, int x, int y);
+        GameObject(const char* textureSheet, int x, int y);
         ~GameObject();
 
         void Update();
@@ -13,5 +14,4 @@ class GameObject {
         int ypos;
         SDL_Texture* objTexture;
         SDL_FRect srcRect, destRect;
-        SDL_Renderer* renderer;
 };
