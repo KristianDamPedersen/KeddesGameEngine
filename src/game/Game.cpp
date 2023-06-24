@@ -2,10 +2,6 @@
 #include "SDL_render.h"
 #include <iostream>
 
-// SDL_Texture* playerTex;
-// SDL_Rect srcR, destR;
-
-
 Game::Game() {}
 
 Game::~Game() {}
@@ -58,14 +54,7 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
         
         // Fetch the player texture
         const char *file = "assets/knight.png"; // This is always relative to the binary's location
-        SDL_Surface* tmpSurface = IMG_Load(file);
-        if(!tmpSurface) {
-            std::cout << "Failed to load image!" << std::endl;
-        }
-
-        playerTex = SDL_CreateTextureFromSurface(renderer, tmpSurface);
-        std::cout << SDL_GetError() << std::endl;
-        SDL_DestroySurface(tmpSurface);
+        playerTex = TextureManager::LoadTexture(file, renderer);
         
         // Set isRunning to true
         isRunning = true;
