@@ -15,7 +15,7 @@ int main() {
 
     game = new Game();
 
-    game->init("Game Window", 800, 600, false);
+    game->init("Game Window", 800, 640, false);
 
     while(game->running()) {
         

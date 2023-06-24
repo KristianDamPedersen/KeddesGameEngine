@@ -10,6 +10,9 @@ GameObject::GameObject(const char* textureSheet, SDL_Renderer* ren, int x, int y
 
 void GameObject::Update() {
     // Here we update position etc.
+    xpos++; 
+    ypos++;
+    
     srcRect.h = 64; 
     srcRect.w = 64;
     srcRect.x = 0;
