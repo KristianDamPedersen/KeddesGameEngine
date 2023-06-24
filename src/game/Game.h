@@ -31,6 +31,5 @@ private:
     bool isRunning;
     SDL_Window *window;
     SDL_Renderer *renderer;
-    SDL_Texture *playerTex;
-    SDL_FRect srcR, destR; 
+    SDL_FRect srcRect, destRect; 
 };
