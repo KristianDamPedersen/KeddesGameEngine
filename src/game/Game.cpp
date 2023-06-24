@@ -57,7 +57,7 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
         }
         
         // Fetch the player texture
-        const char *file = "../assets/knight.png"; // This is always relative to the binary's location
+        const char *file = "assets/knight.png"; // This is always relative to the binary's location
         SDL_Surface* tmpSurface = IMG_Load(file);
         if(!tmpSurface) {
             std::cout << "Failed to load image!" << std::endl;
@@ -94,8 +94,10 @@ void Game::handleEvents() {
 
 void Game::update() {
     cnt++;
-    destR.h = 32;
-    destR.w = 32;
+    destR.h = 64;
+    destR.w = 64;
+    destR.x = cnt;
+    destR.y = cnt;
     std::cout << cnt << std::endl;
 }
 
@@ -103,7 +105,7 @@ void Game::render() {
     SDL_RenderClear(renderer);
 
     // Render stuff here
-    SDL_RenderTexture(renderer, playerTex, NULL, NULL);
+    SDL_RenderTexture(renderer, playerTex, NULL, &destR);
     std::cout << SDL_GetError() << std::endl;
 
     SDL_RenderPresent(renderer);
