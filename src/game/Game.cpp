@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "Map.h"
 #include "SDL_render.h"
 #include "GameObject.h"
 #include <iostream>
@@ -6,6 +7,9 @@
 // Creating the player (type GameObject pointer)
 GameObject* player;
 GameObject* enemy;
+
+// Create the map
+Map* map;
 
 Game::Game() {}
 
@@ -63,7 +67,9 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
         const char *file = "assets/knight.png"; // This is always relative to the binary's location
         player = new GameObject(file, 0, 0);
         enemy = new GameObject(file, 100, 100);
-        
+
+        // Create the map
+        map = new Map();
         
         // Set isRunning to true
         isRunning = true;
@@ -101,10 +107,10 @@ void Game::render() {
     SDL_RenderClear(renderer);
 
     // Render stuff here
+    map->DrawMap();
     player->Render();
     enemy->Render();
     
-
     SDL_RenderPresent(renderer);
 }
 

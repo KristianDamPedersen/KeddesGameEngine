@@ -10,3 +10,8 @@ SDL_Texture* TextureManager::LoadTexture(const char* fileName) {
     SDL_DestroySurface(tempSurface);
     return tex;
 }
+
+
+void TextureManager::Draw(SDL_Texture* tex, SDL_FRect src, SDL_FRect dest) {
+    SDL_RenderTexture(Game::renderer, tex, &src, &dest);
+}

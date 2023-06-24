@@ -5,6 +5,8 @@ add_library(game
     TextureManager.cpp
     GameObject.h
     GameObject.cpp
+    Map.h 
+    Map.cpp
 )
 
 target_link_libraries(game external)
