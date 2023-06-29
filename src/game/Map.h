@@ -2,7 +2,6 @@
 #include "Game.h" 
 
 class Map {
-    
     public:
         Map();
         ~Map();

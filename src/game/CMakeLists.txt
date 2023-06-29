@@ -7,6 +7,8 @@ add_library(game
     GameObject.cpp
     Map.h 
     Map.cpp
+    ECS.h
+    Components.h
 )
 
 target_link_libraries(game external)

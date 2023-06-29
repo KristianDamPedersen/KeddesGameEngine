@@ -2,6 +2,8 @@
 #include "Map.h"
 #include "SDL_render.h"
 #include "GameObject.h"
+#include "ECS.h"
+#include "Components.h"
 #include <iostream>
 
 // Creating the player (type GameObject pointer)
@@ -10,6 +12,12 @@ GameObject* enemy;
 
 // Create the map
 Map* map;
+
+// Create component manager 
+Manager manager;
+
+// auto& is type inference! 
+Entity& newPlayer(manager.addEntity());
 
 Game::Game() {}
 
@@ -70,6 +78,9 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
 
         // Create the map
         map = new Map();
+
+        // Add components to the player
+        newPlayer.addComponent<PositionComponent>();
         
         // Set isRunning to true
         isRunning = true;
@@ -98,9 +109,10 @@ void Game::handleEvents() {
 
 void Game::update() {
     cnt++;
-    std::cout << cnt << std::endl;
     player->Update();
     enemy->Update();
+    manager.update();
+    std::cout << newPlayer.getComponent<PositionComponent>().x() << ", " << newPlayer.getComponent<PositionComponent>().y() << "\n";
 }
 
 void Game::render() {
