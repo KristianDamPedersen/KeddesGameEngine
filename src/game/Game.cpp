@@ -1,14 +1,11 @@
 #include "Game.h"
 #include "ECS/PositionComponent.h"
+#include "ECS/SpriteComponent.h"
 #include "Map.h"
 #include "SDL_render.h"
 #include "GameObject.h"
 #include "ECS/ECS.h"
 #include <iostream>
-
-// Creating the player (type GameObject pointer)
-GameObject* player;
-GameObject* enemy;
 
 // Create the map
 Map* map;
@@ -16,8 +13,10 @@ Map* map;
 // Create component manager 
 Manager manager;
 
+// Create the player and the enemy
 // auto& is type inference! 
-auto& newPlayer(manager.addEntity());
+auto& player(manager.addEntity());
+auto& enemy(manager.addEntity());
 
 Game::Game() {}
 
@@ -71,16 +70,29 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
             std::cout << "Renderer created!" << std::endl;
         }
         
+        // Add the position components
+        player.addComponent<PositionComponent>();
+        player.getComponent<PositionComponent>().setPos(200, 200);
+        
+        enemy.addComponent<PositionComponent>();
+        enemy.getComponent<PositionComponent>().setPos(150, 150);
+        
+        
         // Fetch the player texture
         const char *file = "assets/knight.png"; // This is always relative to the binary's location
-        player = new GameObject(file, 0, 0);
-        enemy = new GameObject(file, 100, 100);
+        int pX = player.getComponent<PositionComponent>().x();
+        int pY = player.getComponent<PositionComponent>().y();
+
+        player.addComponent<SpriteComponent>(file, pX, pY);
+
+        int eX = enemy.getComponent<PositionComponent>().x();
+        int eY = enemy.getComponent<PositionComponent>().y();
+        enemy.addComponent<SpriteComponent>(file, eX, eY);
+
+        
 
         // Create the map
         map = new Map();
-
-        // Add components to the player
-        newPlayer.addComponent<PositionComponent>();
         
         // Set isRunning to true
         isRunning = true;
@@ -109,10 +121,8 @@ void Game::handleEvents() {
 
 void Game::update() {
     cnt++;
-    player->Update();
-    enemy->Update();
     manager.update();
-    std::cout << newPlayer.getComponent<PositionComponent>().x() << ", " << newPlayer.getComponent<PositionComponent>().y() << "\n";
+    std::cout << player.getComponent<PositionComponent>().x() << ", " << player.getComponent<PositionComponent>().y() << "\n";
 }
 
 void Game::render() {
@@ -120,8 +130,7 @@ void Game::render() {
 
     // Render stuff here
     map->DrawMap();
-    player->Render();
-    enemy->Render();
+    manager.draw();
     
     SDL_RenderPresent(renderer);
 }
