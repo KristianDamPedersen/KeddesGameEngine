@@ -1,10 +1,12 @@
 #include "SpriteComponent.h"
 #include "../TextureManager.h"
+#include "PositionComponent.h"
 
-SpriteComponent::SpriteComponent(const char* textureSheet, int x, int y, int s) {
+SpriteComponent::SpriteComponent(const char* textureSheet, PositionComponent* posComp, int h, int w, int s) {
     objTexture = TextureManager::LoadTexture(textureSheet);
-    xpos = x;
-    ypos = y;
+    position = posComp;
+    height = h;
+    width = w;
     scale = s;
 }
 
@@ -14,18 +16,18 @@ void SpriteComponent::init() {
 
 void SpriteComponent::update() {
     // Here we update position etc.
-    xpos++; 
-    ypos++;
+    // xpos++; 
+    // ypos++;
     
-    srcRect.h = 64; 
-    srcRect.w = 64;
+    srcRect.h = height; 
+    srcRect.w = width;
     srcRect.x = 0;
     srcRect.y = 0;
 
     destRect.h = srcRect.h*scale;
     destRect.w = srcRect.w*scale;
-    destRect.x = xpos;
-    destRect.y = ypos;
+    destRect.x = position->x();
+    destRect.y = position->y();
 
 }
 

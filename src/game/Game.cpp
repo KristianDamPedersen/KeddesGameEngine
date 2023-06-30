@@ -82,14 +82,10 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
         const char *file = "assets/knight.png";
 
         // Add the player texture
-        int pX = player.getComponent<PositionComponent>().x();
-        int pY = player.getComponent<PositionComponent>().y();
-        player.addComponent<SpriteComponent>(file, pX, pY, 2);
+        player.addComponent<SpriteComponent>(file, &player.getComponent<PositionComponent>(), 64, 64, 2);
 
         // Add the enemy texture
-        int eX = enemy.getComponent<PositionComponent>().x();
-        int eY = enemy.getComponent<PositionComponent>().y();
-        enemy.addComponent<SpriteComponent>(file, eX, eY, 3);
+        enemy.addComponent<SpriteComponent>(file, &enemy.getComponent<PositionComponent>(), 32, 32, 3);
 
         
 
