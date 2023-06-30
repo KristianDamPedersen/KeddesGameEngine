@@ -1,9 +1,9 @@
 #include "Game.h"
+#include "ECS/PositionComponent.h"
 #include "Map.h"
 #include "SDL_render.h"
 #include "GameObject.h"
-#include "ECS.h"
-#include "Components.h"
+#include "ECS/ECS.h"
 #include <iostream>
 
 // Creating the player (type GameObject pointer)
@@ -17,7 +17,7 @@ Map* map;
 Manager manager;
 
 // auto& is type inference! 
-Entity& newPlayer(manager.addEntity());
+auto& newPlayer(manager.addEntity());
 
 Game::Game() {}
 
