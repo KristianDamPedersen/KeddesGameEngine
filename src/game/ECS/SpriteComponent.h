@@ -3,7 +3,7 @@
 #include "SDL.h"
 class SpriteComponent : public Component {
     public: 
-        SpriteComponent(const char* textureSheet, int x, int y);
+        SpriteComponent(const char* textureSheet, int x, int y, int s);
 
         void init() override;
 
@@ -14,6 +14,7 @@ class SpriteComponent : public Component {
     private: 
         int xpos;
         int ypos;
+        int scale;
         SDL_Texture* objTexture;
         SDL_FRect srcRect, destRect;
 };

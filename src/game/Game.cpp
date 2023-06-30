@@ -75,19 +75,21 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
         player.getComponent<PositionComponent>().setPos(200, 200);
         
         enemy.addComponent<PositionComponent>();
-        enemy.getComponent<PositionComponent>().setPos(150, 150);
+        enemy.getComponent<PositionComponent>().setPos(0, 0);
         
         
         // Fetch the player texture
-        const char *file = "assets/knight.png"; // This is always relative to the binary's location
+        const char *file = "assets/knight.png";
+
+        // Add the player texture
         int pX = player.getComponent<PositionComponent>().x();
         int pY = player.getComponent<PositionComponent>().y();
+        player.addComponent<SpriteComponent>(file, pX, pY, 2);
 
-        player.addComponent<SpriteComponent>(file, pX, pY);
-
+        // Add the enemy texture
         int eX = enemy.getComponent<PositionComponent>().x();
         int eY = enemy.getComponent<PositionComponent>().y();
-        enemy.addComponent<SpriteComponent>(file, eX, eY);
+        enemy.addComponent<SpriteComponent>(file, eX, eY, 3);
 
         
 

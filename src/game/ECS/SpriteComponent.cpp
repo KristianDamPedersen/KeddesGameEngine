@@ -1,21 +1,11 @@
 #include "SpriteComponent.h"
 #include "../TextureManager.h"
 
-/**
- * @brief Constructs a new SpriteComponent object.
- * 
- * This constructor initializes a new SpriteComponent object with the provided texture sheet, x and y coordinates.
- * 
- * @param textureSheet The path to the texture sheet file.
- * @param x The x-coordinate of the sprite.
- * @param y The y-coordinate of the sprite.
- * 
- * @throws std::runtime_error if the texture sheet fails to load.
- */
-SpriteComponent::SpriteComponent(const char* textureSheet, int x, int y) {
+SpriteComponent::SpriteComponent(const char* textureSheet, int x, int y, int s) {
     objTexture = TextureManager::LoadTexture(textureSheet);
     xpos = x;
     ypos = y;
+    scale = s;
 }
 
 void SpriteComponent::init() {
@@ -32,8 +22,8 @@ void SpriteComponent::update() {
     srcRect.x = 0;
     srcRect.y = 0;
 
-    destRect.h = srcRect.h*2;
-    destRect.w = srcRect.w*2;
+    destRect.h = srcRect.h*scale;
+    destRect.w = srcRect.w*scale;
     destRect.x = xpos;
     destRect.y = ypos;
 
