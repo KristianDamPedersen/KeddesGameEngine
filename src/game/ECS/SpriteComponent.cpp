@@ -13,15 +13,22 @@ SpriteComponent::SpriteComponent(const char* textureSheet, PositionComponent* po
 void SpriteComponent::init() {
 }
 
+void SpriteComponent::setAnimation(int numSprites, int spriteOffset, int delayFrames) {
+    animated = true;
+    spriteNum = numSprites;
+    offset = spriteOffset;
+    animationDelayFrames = delayFrames;
+}
+
 
 void SpriteComponent::update() {
-    // Here we update position etc.
-    // xpos++; 
-    // ypos++;
-    
+    if (animated) {
+        srcRect.x = (offset * width) + srcRect.w * static_cast<int>((SDL_GetTicks() / animationDelayFrames) % spriteNum);
+    } else {
+        srcRect.x = 0;
+    }
     srcRect.h = height; 
     srcRect.w = width;
-    srcRect.x = 0;
     srcRect.y = 0;
 
     destRect.h = srcRect.h*scale;

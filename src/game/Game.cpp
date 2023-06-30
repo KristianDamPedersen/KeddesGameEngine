@@ -15,8 +15,8 @@ Manager manager;
 
 // Create the player and the enemy
 // auto& is type inference! 
-auto& player(manager.addEntity());
-auto& enemy(manager.addEntity());
+auto& duox(manager.addEntity());
+auto& tard(manager.addEntity());
 
 Game::Game() {}
 
@@ -71,21 +71,23 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
         }
         
         // Add the position components
-        player.addComponent<PositionComponent>();
-        player.getComponent<PositionComponent>().setPos(200, 200);
+        tard.addComponent<PositionComponent>();
+        tard.getComponent<PositionComponent>().setPos(200, 200);
         
-        enemy.addComponent<PositionComponent>();
-        enemy.getComponent<PositionComponent>().setPos(0, 0);
+        duox.addComponent<PositionComponent>();
+        duox.getComponent<PositionComponent>().setPos(100, 100);
         
-        
-        // Fetch the player texture
-        const char *file = "assets/knight.png";
+        // Add the dinosaur texture
+        const char *duoxFile = "assets/DinoSpritesDuox.png";
+        duox.addComponent<SpriteComponent>(duoxFile, &duox.getComponent<PositionComponent>(), 24, 24, 5);
+        duox.getComponent<SpriteComponent>().setAnimation(3, 0, 100);
 
-        // Add the player texture
-        player.addComponent<SpriteComponent>(file, &player.getComponent<PositionComponent>(), 64, 64, 2);
+        const char* tardFile = "assets/DinoSpritesTard.png";
+        tard.addComponent<SpriteComponent>(tardFile, &tard.getComponent<PositionComponent>(), 24, 24, 5);
+        tard.getComponent<SpriteComponent>().setAnimation(6, 4, 100);
 
-        // Add the enemy texture
-        enemy.addComponent<SpriteComponent>(file, &enemy.getComponent<PositionComponent>(), 32, 32, 3);
+        
+        
 
         
 
@@ -120,7 +122,6 @@ void Game::handleEvents() {
 void Game::update() {
     cnt++;
     manager.update();
-    std::cout << player.getComponent<PositionComponent>().x() << ", " << player.getComponent<PositionComponent>().y() << "\n";
 }
 
 void Game::render() {

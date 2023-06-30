@@ -12,10 +12,17 @@ class SpriteComponent : public Component {
 
         void draw() override;
 
+        void setAnimation(int numSprites, int offset, int delayFrames);
+
     private: 
+        int cnt;
         int scale;
         int height;
         int width;
+        bool animated = false;
+        int spriteNum;
+        int offset;
+        int animationDelayFrames;
         PositionComponent* position;
         SDL_Texture* objTexture;
         SDL_FRect srcRect, destRect;
