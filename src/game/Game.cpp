@@ -17,6 +17,7 @@ Manager manager;
 // auto& is type inference! 
 auto& duox(manager.addEntity());
 auto& tard(manager.addEntity());
+auto& mort(manager.addEntity());
 
 Game::Game() {}
 
@@ -72,10 +73,14 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
         
         // Add the position components
         tard.addComponent<PositionComponent>();
-        tard.getComponent<PositionComponent>().setPos(200, 200);
+        tard.getComponent<PositionComponent>().setPos(0, 0);
         
         duox.addComponent<PositionComponent>();
         duox.getComponent<PositionComponent>().setPos(100, 100);
+
+        mort.addComponent<PositionComponent>();
+        mort.getComponent<PositionComponent>().setPos(200, 200);
+        
         
         // Add the dinosaur texture
         const char *duoxFile = "assets/DinoSpritesDuox.png";
@@ -85,6 +90,12 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
         const char* tardFile = "assets/DinoSpritesTard.png";
         tard.addComponent<SpriteComponent>(tardFile, &tard.getComponent<PositionComponent>(), 24, 24, 5);
         tard.getComponent<SpriteComponent>().setAnimation(6, 4, 100);
+
+        const char* mortFile = "assets/DinoSpritesMort.png";
+        mort.addComponent<SpriteComponent>(mortFile, &mort.getComponent<PositionComponent>(), 24, 24, 5);
+        mort.getComponent<SpriteComponent>().setAnimation(4, 13, 100);
+        
+        
 
         
         
