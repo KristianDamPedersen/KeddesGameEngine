@@ -20,6 +20,4 @@ void PositionComponent::init() {
 };
 
 void PositionComponent::update() {
-    xpos++;
-    ypos++;
 };

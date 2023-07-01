@@ -2,6 +2,7 @@
 #include "ECS/PositionComponent.h"
 #include "ECS/SpriteComponent.h"
 #include "Map.h"
+#include "SDL_keycode.h"
 #include "SDL_render.h"
 #include "GameObject.h"
 #include "ECS/ECS.h"
@@ -18,6 +19,7 @@ Manager manager;
 auto& duox(manager.addEntity());
 auto& tard(manager.addEntity());
 auto& mort(manager.addEntity());
+auto& player(manager.addEntity());
 
 Game::Game() {}
 
@@ -80,6 +82,9 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
 
         mort.addComponent<PositionComponent>();
         mort.getComponent<PositionComponent>().setPos(200, 200);
+
+        player.addComponent<PositionComponent>();
+        player.getComponent<PositionComponent>().setPos(0,0);
         
         
         // Add the dinosaur texture
@@ -94,13 +99,10 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
         const char* mortFile = "assets/DinoSpritesMort.png";
         mort.addComponent<SpriteComponent>(mortFile, &mort.getComponent<PositionComponent>(), 24, 24, 5);
         mort.getComponent<SpriteComponent>().setAnimation(4, 13, 100);
-        
-        
 
-        
-        
-
-        
+        const char* playerFile = "assets/DinoSpritesVita.png";
+        player.addComponent<SpriteComponent>(playerFile, &player.getComponent<PositionComponent>(), 24, 24, 5);
+        player.getComponent<SpriteComponent>().setAnimation(6, 4, 100);
 
         // Create the map
         map = new Map();
@@ -117,9 +119,40 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
     }
 }
 
+void updatePlayerPosition(const Uint8 *keystate, Entity& player) {
+    if (keystate[SDL_SCANCODE_UP] && !(keystate[SDL_SCANCODE_DOWN])) {
+        player.getComponent<PositionComponent>().setPos(
+            player.getComponent<PositionComponent>().x(),
+            player.getComponent<PositionComponent>().y()-5
+        );
+    }
+    else if (!keystate[SDL_SCANCODE_UP] && keystate[SDL_SCANCODE_DOWN]){
+        player.getComponent<PositionComponent>().setPos(
+            player.getComponent<PositionComponent>().x(),
+            player.getComponent<PositionComponent>().y()+5
+        );
+    }
+    if (keystate[SDL_SCANCODE_RIGHT] && !keystate[SDL_SCANCODE_LEFT]){
+        player.getComponent<PositionComponent>().setPos(
+            player.getComponent<PositionComponent>().x()+5,
+            player.getComponent<PositionComponent>().y()
+        );
+    }
+    else if (!keystate[SDL_SCANCODE_RIGHT] && keystate[SDL_SCANCODE_LEFT]){
+        player.getComponent<PositionComponent>().setPos(
+            player.getComponent<PositionComponent>().x()-5,
+            player.getComponent<PositionComponent>().y()
+        );
+    }
+};
+
 void Game::handleEvents() {
     SDL_Event event;
     SDL_PollEvent(&event);
+
+    const Uint8 *keystate = SDL_GetKeyboardState(NULL);
+    updatePlayerPosition(keystate, player);
+    
     switch(event.type) {
         // If the user clicks the X button, quit the game
         case SDL_EVENT_QUIT:
