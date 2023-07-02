@@ -102,7 +102,7 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
 
         const char* playerFile = "assets/DinoSpritesVita.png";
         player.addComponent<SpriteComponent>(playerFile, &player.getComponent<PositionComponent>(), 24, 24, 5);
-        player.getComponent<SpriteComponent>().setAnimation(6, 4, 100);
+        player.getComponent<SpriteComponent>().setAnimation(3, 0, 100);
 
         // Create the map
         map = new Map();
@@ -121,28 +121,38 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
 
 void updatePlayerPosition(const Uint8 *keystate, Entity& player) {
     if (keystate[SDL_SCANCODE_UP] && !(keystate[SDL_SCANCODE_DOWN])) {
+        std::cout << "up" << std::endl;
         player.getComponent<PositionComponent>().setPos(
             player.getComponent<PositionComponent>().x(),
             player.getComponent<PositionComponent>().y()-5
         );
+        player.getComponent<SpriteComponent>().setAnimation(6, 4, 100);
     }
     else if (!keystate[SDL_SCANCODE_UP] && keystate[SDL_SCANCODE_DOWN]){
+        std::cout << "down" << std::endl;
         player.getComponent<PositionComponent>().setPos(
             player.getComponent<PositionComponent>().x(),
             player.getComponent<PositionComponent>().y()+5
         );
+        player.getComponent<SpriteComponent>().setAnimation(6, 4, 100);
     }
     if (keystate[SDL_SCANCODE_RIGHT] && !keystate[SDL_SCANCODE_LEFT]){
+        std::cout << "right" << std::endl;
         player.getComponent<PositionComponent>().setPos(
             player.getComponent<PositionComponent>().x()+5,
             player.getComponent<PositionComponent>().y()
         );
+        player.getComponent<SpriteComponent>().setAnimation(6, 4, 100);
     }
     else if (!keystate[SDL_SCANCODE_RIGHT] && keystate[SDL_SCANCODE_LEFT]){
+        std::cout << "left" << std::endl;
         player.getComponent<PositionComponent>().setPos(
             player.getComponent<PositionComponent>().x()-5,
             player.getComponent<PositionComponent>().y()
         );
+        player.getComponent<SpriteComponent>().setAnimation(6, 4, 100);
+    } else if (!keystate[SDL_SCANCODE_UP] && !keystate[SDL_SCANCODE_DOWN] && !keystate[SDL_SCANCODE_RIGHT] && !keystate[SDL_SCANCODE_LEFT]){
+        player.getComponent<SpriteComponent>().setAnimation(3, 0, 100);
     }
 };
 
