@@ -143,6 +143,8 @@ void updatePlayerPosition(const Uint8 *keystate, Entity& player) {
             player.getComponent<PositionComponent>().y()
         );
         player.getComponent<SpriteComponent>().setAnimation(6, 4, 100);
+        player.getComponent<SpriteComponent>().setFlipState(SpriteComponent::FlipState::none);
+    
     }
     else if (!keystate[SDL_SCANCODE_RIGHT] && keystate[SDL_SCANCODE_LEFT]){
         std::cout << "left" << std::endl;
@@ -151,6 +153,7 @@ void updatePlayerPosition(const Uint8 *keystate, Entity& player) {
             player.getComponent<PositionComponent>().y()
         );
         player.getComponent<SpriteComponent>().setAnimation(6, 4, 100);
+        player.getComponent<SpriteComponent>().setFlipState(SpriteComponent::FlipState::vertical);
     } else if (!keystate[SDL_SCANCODE_UP] && !keystate[SDL_SCANCODE_DOWN] && !keystate[SDL_SCANCODE_RIGHT] && !keystate[SDL_SCANCODE_LEFT]){
         player.getComponent<SpriteComponent>().setAnimation(3, 0, 100);
     }

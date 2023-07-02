@@ -4,6 +4,13 @@
 #include "PositionComponent.h"
 class SpriteComponent : public Component {
     public: 
+
+        enum class FlipState {
+            none,
+            horizontal,
+            vertical
+        };
+
         SpriteComponent(const char* textureSheet, PositionComponent* posComp, int h, int w, int s);
 
         void init() override;
@@ -13,6 +20,11 @@ class SpriteComponent : public Component {
         void draw() override;
 
         void setAnimation(int numSprites, int offset, int delayFrames);
+        
+        void setFlipState(FlipState flipState);
+        
+        FlipState getFlipState();
+        
 
     private: 
         int cnt;
@@ -22,6 +34,7 @@ class SpriteComponent : public Component {
         bool animated = false;
         int spriteNum;
         int offset;
+        FlipState flip = FlipState::none;
         int animationDelayFrames;
         PositionComponent* position;
         SDL_Texture* objTexture;

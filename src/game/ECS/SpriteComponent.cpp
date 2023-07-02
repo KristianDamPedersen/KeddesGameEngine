@@ -1,6 +1,7 @@
 #include "SpriteComponent.h"
 #include "../TextureManager.h"
 #include "PositionComponent.h"
+#include "SDL_render.h"
 
 SpriteComponent::SpriteComponent(const char* textureSheet, PositionComponent* posComp, int h, int w, int s) {
     objTexture = TextureManager::LoadTexture(textureSheet);
@@ -40,7 +41,25 @@ void SpriteComponent::update() {
 
 void SpriteComponent::draw() {
     // This is where we render the updated game object.
-    SDL_RenderTexture(Game::renderer, objTexture, &srcRect, &destRect);
+    switch (flip) {
+        case FlipState::none:
+            SDL_RenderTexture(Game::renderer, objTexture, &srcRect, &destRect);
+            break;
+        case FlipState::horizontal:
+            SDL_RenderTextureRotated(Game::renderer, objTexture, &srcRect, &destRect, 0, nullptr, SDL_FLIP_HORIZONTAL);
+            break;
+        case FlipState::vertical:
+            SDL_RenderTextureRotated(Game::renderer, objTexture, &srcRect, &destRect, 0, nullptr, SDL_FLIP_HORIZONTAL);
+            // SDL_RenderCopyEx(renderer, texture, nullptr, &destinationRect, 0, nullptr, SDL_FLIP_HORIZONTAL);
+
+            break;
+    }
 }
 
+SpriteComponent::FlipState SpriteComponent::getFlipState(){
+    return flip;
+}
 
+void SpriteComponent::setFlipState(FlipState flipState){
+    flip = flipState;
+}
