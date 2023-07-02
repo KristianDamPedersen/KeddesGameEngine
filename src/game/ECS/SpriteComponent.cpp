@@ -50,8 +50,6 @@ void SpriteComponent::draw() {
             break;
         case FlipState::vertical:
             SDL_RenderTextureRotated(Game::renderer, objTexture, &srcRect, &destRect, 0, nullptr, SDL_FLIP_HORIZONTAL);
-            // SDL_RenderCopyEx(renderer, texture, nullptr, &destinationRect, 0, nullptr, SDL_FLIP_HORIZONTAL);
-
             break;
     }
 }
