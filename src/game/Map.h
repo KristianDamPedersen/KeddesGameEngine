@@ -21,7 +21,8 @@ class Map {
         enum class TileType {
             DIRT,
             GRASS,
-            WATER
+            WATER,
+            AIR
         };
 
     private:
