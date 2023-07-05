@@ -16,9 +16,6 @@ Manager manager;
 
 // Create the player and the enemy
 // auto& is type inference! 
-auto& duox(manager.addEntity());
-auto& tard(manager.addEntity());
-auto& mort(manager.addEntity());
 auto& player(manager.addEntity());
 
 Game::Game() {}
@@ -74,32 +71,11 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
         }
         
         // Add the position components
-        tard.addComponent<PositionComponent>();
-        tard.getComponent<PositionComponent>().setPos(0, 0);
-        
-        duox.addComponent<PositionComponent>();
-        duox.getComponent<PositionComponent>().setPos(100, 100);
-
-        mort.addComponent<PositionComponent>();
-        mort.getComponent<PositionComponent>().setPos(200, 200);
-
         player.addComponent<PositionComponent>();
         player.getComponent<PositionComponent>().setPos(0,0);
         
         
         // Add the dinosaur texture
-        const char *duoxFile = "assets/DinoSpritesDuox.png";
-        duox.addComponent<SpriteComponent>(duoxFile, &duox.getComponent<PositionComponent>(), 24, 24, 5);
-        duox.getComponent<SpriteComponent>().setAnimation(3, 0, 100);
-
-        const char* tardFile = "assets/DinoSpritesTard.png";
-        tard.addComponent<SpriteComponent>(tardFile, &tard.getComponent<PositionComponent>(), 24, 24, 5);
-        tard.getComponent<SpriteComponent>().setAnimation(6, 4, 100);
-
-        const char* mortFile = "assets/DinoSpritesMort.png";
-        mort.addComponent<SpriteComponent>(mortFile, &mort.getComponent<PositionComponent>(), 24, 24, 5);
-        mort.getComponent<SpriteComponent>().setAnimation(4, 13, 100);
-
         const char* playerFile = "assets/DinoSpritesVita.png";
         player.addComponent<SpriteComponent>(playerFile, &player.getComponent<PositionComponent>(), 24, 24, 5);
         player.getComponent<SpriteComponent>().setAnimation(3, 0, 100);
