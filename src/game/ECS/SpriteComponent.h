@@ -11,19 +11,21 @@ class SpriteComponent : public Component {
             vertical
         };
 
-        SpriteComponent(const char* textureSheet, PositionComponent* posComp, int h, int w, int s);
+        SpriteComponent(const char* textureSheet, SDL_Renderer* renderer, PositionComponent* posComp, int h, int w, int s);
 
-        void init() override;
+        virtual void update() override;
 
-        void update() override;
-
-        void draw() override;
+        virtual void draw(SDL_Renderer* renderer) override;
 
         void setAnimation(int numSprites, int offset, int delayFrames);
         
         void setFlipState(FlipState flipState);
         
         FlipState getFlipState();
+
+        SDL_FRect getSrcRect();
+
+        SDL_FRect getDestRect();
         
 
     private: 

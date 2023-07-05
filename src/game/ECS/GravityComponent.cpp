@@ -6,9 +6,7 @@ GravityComponent::GravityComponent(PositionComponent* pos, int grav){
     position = pos;
 };
 
-void GravityComponent::init() {};
-
-void GravityComponent::draw() {};
+void GravityComponent::draw(SDL_Renderer* renderer) {};
 
 void GravityComponent::update() {
     position->setPos(position->x(), position->y() + gravity);

@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "ECS/PositionComponent.h"
+#include "ECS/MapCollisionComponent.h"
 #include "ECS/GravityComponent.h"
 #include "ECS/SpriteComponent.h"
 #include "Map.h"
@@ -8,18 +9,13 @@
 #include "GameObject.h"
 #include "ECS/ECS.h"
 #include <iostream>
-
-// Create the map
-Map* map;
-
-// Create component manager 
-Manager manager;
+#include <typeinfo>
 
 // Create the player and the enemy
-// auto& is type inference! 
-auto& player(manager.addEntity());
-
-Game::Game() {}
+Game::Game() {
+    manager = std::make_unique<Manager>();
+    player = manager->addEntity();
+}
 
 Game::~Game() {}
 
@@ -71,22 +67,34 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
             std::cout << "Renderer created!" << std::endl;
         }
         
+        map = std::make_unique<Map>(Game::renderer);
+        
         // Add the position components
-        player.addComponent<PositionComponent>();
-        player.getComponent<PositionComponent>().setPos(0,0);
+        // player.addComponent<PositionComponent>();
+        // player.getComponent<PositionComponent>().setPos(0,0);
+        player->addComponent(std::unique_ptr<Component>(new PositionComponent()));
+        auto pos = player->getComponent<PositionComponent>();
+        pos->setPos(0,0);
+        
+        
 
 
         // Add gravity component
-        player.addComponent<GravityComponent>(&player.getComponent<PositionComponent>(), 10);
+        // player.addComponent<GravityComponent>(&player.getComponent<PositionComponent>(), 10);
+        player->addComponent(std::unique_ptr<Component>(new GravityComponent(pos, 10)));
         
         
         // Add the dinosaur texture
         const char* playerFile = "assets/DinoSpritesVita.png";
-        player.addComponent<SpriteComponent>(playerFile, &player.getComponent<PositionComponent>(), 24, 24, 5);
-        player.getComponent<SpriteComponent>().setAnimation(3, 0, 100);
+        // player.addComponent<SpriteComponent>(playerFile, &player.getComponent<PositionComponent>(), 24, 24, 5);
+        // player.getComponent<SpriteComponent>().setAnimation(3, 0, 100);
+        player->addComponent(std::unique_ptr<Component>(new SpriteComponent(playerFile, Game::renderer, pos, 24, 24, 5)));
 
+        // Add the map collision component
+        // player.addComponent<MapCollisionComponent>(player.getComponent<SpriteComponent>());
+        
         // Create the map
-        map = new Map();
+        // map = new Map();
         
         // Set isRunning to true
         isRunning = true;
@@ -101,42 +109,43 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
 }
 
 void updatePlayerPosition(const Uint8 *keystate, Entity& player) {
+    auto pos = player.getComponent<PositionComponent>();
+    auto sprite = player.getComponent<SpriteComponent>();
     if (keystate[SDL_SCANCODE_UP] && !(keystate[SDL_SCANCODE_DOWN])) {
         std::cout << "up" << std::endl;
-        player.getComponent<PositionComponent>().setPos(
-            player.getComponent<PositionComponent>().x(),
-            player.getComponent<PositionComponent>().y()-5
+        pos->setPos(
+            pos->x(),
+            pos->y()-5
         );
-        player.getComponent<SpriteComponent>().setAnimation(6, 4, 100);
+        sprite->setAnimation(6, 4, 100);
     }
     else if (!keystate[SDL_SCANCODE_UP] && keystate[SDL_SCANCODE_DOWN]){
         std::cout << "down" << std::endl;
-        player.getComponent<PositionComponent>().setPos(
-            player.getComponent<PositionComponent>().x(),
-            player.getComponent<PositionComponent>().y()+5
+        pos->setPos(
+            pos->x(),
+            pos->y()+5
         );
-        player.getComponent<SpriteComponent>().setAnimation(6, 4, 100);
+        sprite->setAnimation(6, 4, 100);
     }
     if (keystate[SDL_SCANCODE_RIGHT] && !keystate[SDL_SCANCODE_LEFT]){
         std::cout << "right" << std::endl;
-        player.getComponent<PositionComponent>().setPos(
-            player.getComponent<PositionComponent>().x()+5,
-            player.getComponent<PositionComponent>().y()
+        pos->setPos(
+            pos->x()+5,
+            pos->y()
         );
-        player.getComponent<SpriteComponent>().setAnimation(6, 4, 100);
-        player.getComponent<SpriteComponent>().setFlipState(SpriteComponent::FlipState::none);
-    
+        sprite->setAnimation(6, 4, 100);
+        sprite->setFlipState(SpriteComponent::FlipState::none);
     }
     else if (!keystate[SDL_SCANCODE_RIGHT] && keystate[SDL_SCANCODE_LEFT]){
         std::cout << "left" << std::endl;
-        player.getComponent<PositionComponent>().setPos(
-            player.getComponent<PositionComponent>().x()-5,
-            player.getComponent<PositionComponent>().y()
+        pos->setPos(
+            pos->x()-5,
+            pos->y()
         );
-        player.getComponent<SpriteComponent>().setAnimation(6, 4, 100);
-        player.getComponent<SpriteComponent>().setFlipState(SpriteComponent::FlipState::vertical);
+        sprite->setAnimation(6, 4, 100);
+        sprite->setFlipState(SpriteComponent::FlipState::horizontal);
     } else if (!keystate[SDL_SCANCODE_UP] && !keystate[SDL_SCANCODE_DOWN] && !keystate[SDL_SCANCODE_RIGHT] && !keystate[SDL_SCANCODE_LEFT]){
-        player.getComponent<SpriteComponent>().setAnimation(3, 0, 100);
+        sprite->setAnimation(3, 0, 100);
     }
 };
 
@@ -145,7 +154,7 @@ void Game::handleEvents() {
     SDL_PollEvent(&event);
 
     const Uint8 *keystate = SDL_GetKeyboardState(NULL);
-    updatePlayerPosition(keystate, player);
+    updatePlayerPosition(keystate, *player);
     
     switch(event.type) {
         // If the user clicks the X button, quit the game
@@ -159,8 +168,8 @@ void Game::handleEvents() {
 
 void Game::update() {
     cnt++;
-    manager.update();
-    std::cout << "Player position: " << player.getComponent<PositionComponent>().x() << ", " << player.getComponent<PositionComponent>().y() << std::endl;
+    manager->update();
+    std::cout << "Player position: " << player->getComponent<PositionComponent>()->x() << ", " << player->getComponent<PositionComponent>()->y() << std::endl;
     std::cout << "Frame: " << cnt << std::endl;
 }
 
@@ -169,7 +178,7 @@ void Game::render() {
 
     // Render stuff here
     map->DrawMap();
-    manager.draw();
+    manager->draw(Game::renderer);
     
     SDL_RenderPresent(renderer);
 }

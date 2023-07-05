@@ -1,6 +1,8 @@
 #pragma once
 #include "SDL.h"
 #include "SDL_image.h"
+#include "Map.h"
+#include "ECS/ECS.h"
 #include "TextureManager.h"
 
 class Game {
@@ -32,6 +34,9 @@ class Game {
 private:
     int cnt = 0;
     bool isRunning;
+    std::unique_ptr<Manager> manager;
+    std::unique_ptr<Map> map;
+    std::shared_ptr<Entity> player;
     SDL_Window *window;
     SDL_FRect srcRect, destRect; 
 };

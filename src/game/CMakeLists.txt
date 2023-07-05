@@ -3,8 +3,6 @@ add_library(game
     Game.h
     TextureManager.h 
     TextureManager.cpp
-    GameObject.h
-    GameObject.cpp
     Map.h 
     Map.cpp
 )

@@ -1,102 +1,85 @@
-#pragma once 
-#include <iostream>
-#include <vector> 
+#pragma once
+#include <vector>
+#include <map>
+#include "SDL.h"
+#include <typeinfo>
+#include <typeindex>
 #include <memory>
-#include <algorithm>
-#include <bitset>
-#include <array>
 
 class Component;
 class Entity;
-
-using ComponentID = std::size_t;
-
-inline ComponentID getComponentID() {
-    static ComponentID lastID = 0;
-    return lastID++;
-}
-
-template <typename T> inline ComponentID getComponentID() noexcept {
-    static ComponentID typeID = getComponentID();
-    return typeID;
-}
-
-constexpr std::size_t maxComponents = 32;
-using ComponentBitSet = std::bitset<maxComponents>;
-using ComponentArray = std::array<Component*, maxComponents>;
+class Manager;
 
 class Component {
     public:
-        Entity* entity;
-        virtual void init() {}
+        Entity* entity; // ?
+        Component() {}
         virtual void update() {}
-        virtual void draw() {}
+        virtual void draw(SDL_Renderer* renderer) {}
         virtual ~Component() {}
 };
 
 class Entity {
-    private:
+    private: 
         bool active = true;
-        std::vector<std::unique_ptr<Component>> components;
-
-        ComponentArray componentArray;
-        ComponentBitSet componentBitSet;
+        // {GravityComponent, *GravityComponent}
+        std::map<std::type_index, std::unique_ptr<Component>> components;
     public:
         void update() {
-            for(auto& c : components) c->update();
-        }
-        void draw() {
-            for (auto& c : components) c->draw();
-        }
-        bool isActive() const { return active; }
+            for(auto& c : components) {
+                c.second->update();
+            }
+        };
+        void draw(SDL_Renderer* renderer) {
+            for(auto& c : components) {
+                c.second->draw(renderer);
+            }
+        };
+        bool isActive() { return active; }
         void destroy() { active = false; }
-
-        template<typename T> bool hasComponent() const {
-            return componentBitSet[getComponentID<T>()];
+        bool hasComponent(std::type_info typeID) {
+            return components.find(typeID) != components.end();   
         }
 
-        template <typename T, typename... TArgs>
-        T& addComponent(TArgs&&... mArgs) {
-            T* c(new T(std::forward<TArgs>(mArgs)...));
-            c->entity = this;
-            std::unique_ptr<Component> uPtr{ c };
-
-            components.emplace_back(std::move(uPtr));
-            componentArray[getComponentID<T>()] = c;
-            componentBitSet[getComponentID<T>()] = true;
-            c->init();
-            return *c;
+        Component* addComponent(std::unique_ptr<Component> component) {
+            auto id = std::type_index(typeid(*component.get()));
+            components.emplace(typeid(*component.get()), std::move(component));
+            return getComponentByType(id);
         }
 
-        template<typename T> T& getComponent() const {
-            auto ptr(componentArray[getComponentID<T>()]);
-            return *static_cast<T*>(ptr);
+        Component* getComponentByType(std::type_index typeID) {
+            auto& val = components.at(typeID);
+            return val.get();
+        }
+
+        template<typename T>
+        T* getComponent() {
+            return dynamic_cast<T*>(getComponentByType(typeid(T)));
         }
 
 };
 
 class Manager {
     private:
-        std::vector<std::unique_ptr<Entity>> entities;
-
+        std::vector<std::shared_ptr<Entity>> entities;
     public:
         void update() {
-            for (auto& e : entities) e->update();
+            for (auto& e: entities) e->update();
         }
-        void draw() {
-            for (auto& e : entities) e->draw();
+        void draw(SDL_Renderer* renderer) {
+            for (auto& e : entities) e->draw(renderer);
         }
         void refresh() {
-            entities.erase(std::remove_if(std::begin(entities), std::end(entities), [](const std::unique_ptr<Entity> &mEntity) {
-                return !mEntity->isActive();
-            }), std::end(entities));
-        }
-        
-        Entity& addEntity() {
-            Entity* e = new Entity();
-            std::unique_ptr<Entity> uPtr{ e };
-            entities.emplace_back(std::move(uPtr));
-            return *e;
+            // Iterating from behind, we remove any inactive entities 
+            for (int i = entities.size() - 1; i >= 0; i--) {
+                if (!entities[i]->isActive()) {
+                    entities.erase(entities.begin()+i);
+                }
+            }
         }
 
+        std::shared_ptr<Entity> addEntity() {
+            entities.emplace_back(std::make_shared<Entity>());
+            return entities.back();
+        }
 };

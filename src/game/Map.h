@@ -1,9 +1,12 @@
 #pragma once 
-#include "Game.h" 
+#include <vector>
+#include <array>
+#include "SDL.h"
+#include "TextureManager.h"
 
 class Map {
     public:
-        Map();
+        Map(SDL_Renderer* renderer);
         ~Map();
         
         /* 
@@ -25,11 +28,25 @@ class Map {
             AIR
         };
 
+        // Collisions 
+        enum class CollisionDirection {
+            NONE,
+            TOP,
+            BOTTOM,
+            LEFT,
+            RIGHT
+        };
+
+        std::vector<CollisionDirection> checkCollisionWithMap(SDL_FRect bbox);
+
     private:
         SDL_FRect srcRect, destRect;
         SDL_Texture* dirt;
         SDL_Texture* grass;
         SDL_Texture* water;
+        SDL_Texture* air;
+
+        SDL_Renderer* gameRenderer;
 
         // Map is an array of TileTypes
         TileType map[20][25];

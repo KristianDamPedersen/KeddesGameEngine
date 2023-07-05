@@ -7,9 +7,8 @@ class GravityComponent : public Component {
     
     public: 
         GravityComponent(PositionComponent* pos, int gravity);
-        void init() override;
-        void update() override;
-        void draw() override;
+        virtual void update() override;
+        virtual void draw(SDL_Renderer* renderer) override;
     
     private: 
         PositionComponent* position;

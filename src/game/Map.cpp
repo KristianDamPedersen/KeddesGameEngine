@@ -44,10 +44,12 @@ int lvl1[20][25] = {
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 };
 
-Map::Map() {
-    dirt = TextureManager::LoadTexture("assets/dirt.png");
-    grass = TextureManager::LoadTexture("assets/grass.png");
-    water = TextureManager::LoadTexture("assets/water.png");
+Map::Map(SDL_Renderer* renderer) {
+    gameRenderer = renderer;
+    air = TextureManager::LoadTexture("assets/air.png", gameRenderer);
+    dirt = TextureManager::LoadTexture("assets/dirt.png", gameRenderer);
+    grass = TextureManager::LoadTexture("assets/grass.png", gameRenderer);
+    water = TextureManager::LoadTexture("assets/water.png", gameRenderer);
     
     // Initialize map with default level
     LoadMapFromIntArray(lvl1);
@@ -90,17 +92,54 @@ void Map::DrawMap() {
             
             switch (type) {
                 case Map::TileType::WATER:
-                    TextureManager::Draw(water, srcRect, destRect);
+                    TextureManager::Draw(water, gameRenderer, srcRect, destRect);
                     break;
                 
                 case Map::TileType::GRASS:
-                    TextureManager::Draw(grass, srcRect, destRect);
+                    TextureManager::Draw(grass, gameRenderer, srcRect, destRect);
                     break;
                 
                 case Map::TileType::DIRT:
-                    TextureManager::Draw(dirt, srcRect, destRect);
+                    TextureManager::Draw(dirt, gameRenderer, srcRect, destRect);
+                    break;
+                case Map::TileType::AIR:
+                    TextureManager::Draw(air, gameRenderer, srcRect, destRect);
                     break;
            }
         }
     }
 };
+
+
+bool isCollidable(Map::TileType tileType) {
+    switch (tileType) {
+        case Map::TileType::AIR:
+            return false;
+        case Map::TileType::WATER:
+            return false;
+        case Map::TileType::GRASS:
+            return true;
+        case Map::TileType::DIRT:
+            return true;
+        default:
+            return false;
+    }
+};
+
+std::vector<Map::CollisionDirection> Map::checkCollisionWithMap(SDL_FRect bbox) {
+    std::vector<Map::CollisionDirection> collisionDirections;
+
+    std::cout <<"Checking collision with map" << std::endl;
+
+    int bboxUpLeftX = bbox.x;
+    int bboxUpLeftY = bbox.y;
+    int bboxWidth = bbox.w;
+    int bboxHeight = bbox.h;
+
+    std::cout << "BBOX UL: " << bboxUpLeftX << ", " << bboxUpLeftY << std::endl;
+    std::cout << "BBOX WIDTH: " << bboxWidth << std::endl;
+    std::cout << "BBOX HEIGHT: " << bboxHeight << std::endl;
+    
+    return collisionDirections;
+}
+

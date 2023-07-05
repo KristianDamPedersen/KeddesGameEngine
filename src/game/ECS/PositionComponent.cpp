@@ -14,7 +14,7 @@ void PositionComponent::setPos(int x, int y) {
     ypos = y;
 }
 
-void PositionComponent::init() {
+PositionComponent::PositionComponent() {
     xpos = 0;
     ypos = 0;
 };
