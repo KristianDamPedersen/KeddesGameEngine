@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "ECS/PositionComponent.h"
+#include "ECS/GravityComponent.h"
 #include "ECS/SpriteComponent.h"
 #include "Map.h"
 #include "SDL_keycode.h"
@@ -73,6 +74,10 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
         // Add the position components
         player.addComponent<PositionComponent>();
         player.getComponent<PositionComponent>().setPos(0,0);
+
+
+        // Add gravity component
+        player.addComponent<GravityComponent>(&player.getComponent<PositionComponent>(), 10);
         
         
         // Add the dinosaur texture
@@ -155,6 +160,8 @@ void Game::handleEvents() {
 void Game::update() {
     cnt++;
     manager.update();
+    std::cout << "Player position: " << player.getComponent<PositionComponent>().x() << ", " << player.getComponent<PositionComponent>().y() << std::endl;
+    std::cout << "Frame: " << cnt << std::endl;
 }
 
 void Game::render() {

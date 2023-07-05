@@ -4,6 +4,8 @@ add_library(ecs
     PositionComponent.cpp
     SpriteComponent.h 
     SpriteComponent.cpp
+    GravityComponent.h
+    GravityComponent.cpp
 )
 
 target_link_libraries(ecs external)
