@@ -67,36 +67,23 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
             std::cout << "Renderer created!" << std::endl;
         }
         
+        
+        // Create the map
         map = std::make_unique<Map>(Game::renderer);
         
         // Add the position components
-        // player.addComponent<PositionComponent>();
-        // player.getComponent<PositionComponent>().setPos(0,0);
         player->addComponent(std::unique_ptr<Component>(new PositionComponent()));
         auto pos = player->getComponent<PositionComponent>();
         pos->setPos(0,0);
-        
-        
-
 
         // Add gravity component
-        // player.addComponent<GravityComponent>(&player.getComponent<PositionComponent>(), 10);
         player->addComponent(std::unique_ptr<Component>(new GravityComponent(pos, 10)));
-        
         
         // Add the dinosaur texture
         const char* playerFile = "assets/DinoSpritesVita.png";
-        // player.addComponent<SpriteComponent>(playerFile, &player.getComponent<PositionComponent>(), 24, 24, 5);
-        // player.getComponent<SpriteComponent>().setAnimation(3, 0, 100);
         player->addComponent(std::unique_ptr<Component>(new SpriteComponent(playerFile, Game::renderer, pos, 24, 24, 5)));
 
         // Add the map collision component
-        // player.addComponent<MapCollisionComponent>(player.getComponent<SpriteComponent>());
-        
-        // Create the map
-        // map = new Map();
-        
-        // Set isRunning to true
         isRunning = true;
 
     } else {
