@@ -8,6 +8,7 @@ add_library(game
 )
 
 add_subdirectory(ECS)
+add_subdirectory(SampleGame)
 
-target_link_directories(game PRIVATE ECS)
-target_link_libraries(game external ecs)
+target_link_directories(game PRIVATE ECS PRIVATE SampleGame)
+target_link_libraries(game external ecs sampleGame)

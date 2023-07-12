@@ -6,6 +6,8 @@ add_library(ecs
     SpriteComponent.cpp
     GravityComponent.h
     GravityComponent.cpp
+    EntityType.h
+    EnumClassIterator.h
 )
 
 target_link_libraries(ecs external)

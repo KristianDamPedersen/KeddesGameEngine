@@ -1,14 +1,18 @@
 #pragma once
+#pragma once
 #include <vector>
 #include <map>
+#include <any>
 #include "SDL.h"
+#include "EntityType.h"
+#include "EnumClassIterator.h"
 #include <typeinfo>
 #include <typeindex>
 #include <memory>
 
+class Manager;
 class Component;
 class Entity;
-class Manager;
 
 class Component {
     public:
@@ -28,7 +32,33 @@ class Entity {
         // the old one. The output looks something like:
         // {GravityComponent, *GravityComponent}
         std::map<std::type_index, std::unique_ptr<Component>> components;
+
+        // Each entity has a type, in order to be able to group them with other
+        // entities. The different valid enums are listed in the EntityType.h.
+        EntityType type;
+
+        SDL_Renderer* renderer;
+
     public:
+       
+        // If no argument is parsed for the entity type, we simply assign it as generic.
+        Entity(SDL_Renderer* renderer) { 
+            type = EntityType::Generic;
+            renderer = renderer;
+            init();
+        }
+
+        // Else we assign it as the type of entity that it is.
+        Entity(EntityType entType, SDL_Renderer* renderer) { 
+            type = entType;
+            renderer = renderer;
+            init();
+        }
+
+        virtual void init() {};
+
+        SDL_Renderer* getRenderer() { return renderer; }
+
         void update() {
             for(auto& c : components) {
                 c.second->update();
@@ -45,6 +75,7 @@ class Entity {
         bool hasComponent(std::type_info typeID) {
             return components.find(typeID) != components.end();   
         }
+
         // Add a component to the entity. Writes the component to the correct spot
         // corresponding with the type of the component pointed to by the unique_ptr.
         Component* addComponent(std::unique_ptr<Component> component) {
@@ -71,25 +102,65 @@ class Entity {
 class Manager {
     private:
         // We need shared pointers as the entities are accessed by multiple instances.
-        std::vector<std::shared_ptr<Entity>> entities;
+        std::map<EntityType, std::vector<std::shared_ptr<Entity>>> entities;
+        SDL_Renderer* renderer;
+
     public:
+
+        Manager(SDL_Renderer* gameRenderer) { renderer = gameRenderer ;}
+
         void update() {
-            for (auto& e: entities) e->update();
+            for (auto& elem: entities) {
+                for (auto& e : elem.second) e->update();
+            };
         }
+
         void draw(SDL_Renderer* renderer) {
-            for (auto& e : entities) e->draw(renderer);
+            for (auto& elem: entities) {
+                for (auto& e : elem.second) e->draw(renderer);
+            }
         }
+        
         void refresh() {
-            // Iterating from behind, we remove any inactive entities 
-            for (int i = entities.size() - 1; i >= 0; i--) {
-                if (!entities[i]->isActive()) {
-                    entities.erase(entities.begin()+i);
+            for (auto& elem: entities) {
+                // Iterating from behind, we remove any inactive entities 
+                for (int i = elem.second.size() - 1; i >= 0; i--) {
+                    if (!elem.second[i]->isActive()) {
+                        elem.second.erase(elem.second.begin()+i);
+                    }
                 }
             }
         }
 
-        std::shared_ptr<Entity> addEntity() {
-            entities.emplace_back(std::make_shared<Entity>());
-            return entities.back();
+        template <typename T>
+        std::vector<std::shared_ptr<T>> getEntitiesByType(EntityType entType) {
+            auto& ents = entities.at(entType);
+            return ents;
+        };
+        
+        template <typename T>
+        std::vector<std::shared_ptr<T>> emptySharedPtrVec() {
+            return std::vector<std::shared_ptr<T>>();
         }
+        
+        template <typename T>
+        std::shared_ptr<T> addEntity(EntityType entType) {
+            // First we check wether we have any entities in the map already,
+            // we just simply add the new entity if we do, or create a new entity 
+            // type in the map if we don't.
+            auto entity = std::make_shared<T>(renderer);
+            if (entities.find(entType) == entities.end()) {
+                // If not found
+                auto vec = emptySharedPtrVec<Entity>();
+                vec.push_back(entity);
+                entities.insert({entType, vec});
+
+            } else {
+                // If found
+                auto& ents = entities.at(entType);
+                ents.push_back(std::make_shared<T>());
+            }
+            return entity;
+        }
+
 };

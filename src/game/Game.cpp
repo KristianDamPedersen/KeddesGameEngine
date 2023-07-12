@@ -3,18 +3,20 @@
 #include "ECS/MapCollisionComponent.h"
 #include "ECS/GravityComponent.h"
 #include "ECS/SpriteComponent.h"
+#include "ECS/EntityType.h"
 #include "Map.h"
 #include "SDL_keycode.h"
 #include "SDL_render.h"
 #include "GameObject.h"
 #include "ECS/ECS.h"
+#include "SampleGame/Player.h"
 #include <iostream>
 #include <typeinfo>
 
 // Create the player and the enemy
 Game::Game() {
-    manager = std::make_unique<Manager>();
-    player = manager->addEntity();
+    manager = std::make_unique<Manager>(Game::renderer);
+    manager->addEntity<Player>(EntityType::Player);
 }
 
 Game::~Game() {}
@@ -68,21 +70,10 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
         }
         
         
+        
         // Create the map
         map = std::make_unique<Map>(Game::renderer);
         
-        // Add the position components
-        player->addComponent(std::unique_ptr<Component>(new PositionComponent()));
-        auto pos = player->getComponent<PositionComponent>();
-        pos->setPos(0,0);
-
-        // Add gravity component
-        player->addComponent(std::unique_ptr<Component>(new GravityComponent(pos, 10)));
-        
-        // Add the dinosaur texture
-        const char* playerFile = "assets/DinoSpritesVita.png";
-        player->addComponent(std::unique_ptr<Component>(new SpriteComponent(playerFile, Game::renderer, pos, 24, 24, 5)));
-
         // Add the map collision component
         isRunning = true;
 
@@ -95,54 +86,10 @@ void Game::init(const char* title, int width, int height, bool fullscreen) {
     }
 }
 
-void updatePlayerPosition(const Uint8 *keystate, Entity& player) {
-    auto pos = player.getComponent<PositionComponent>();
-    auto sprite = player.getComponent<SpriteComponent>();
-    if (keystate[SDL_SCANCODE_UP] && !(keystate[SDL_SCANCODE_DOWN])) {
-        std::cout << "up" << std::endl;
-        pos->setPos(
-            pos->x(),
-            pos->y()-5
-        );
-        sprite->setAnimation(6, 4, 100);
-    }
-    else if (!keystate[SDL_SCANCODE_UP] && keystate[SDL_SCANCODE_DOWN]){
-        std::cout << "down" << std::endl;
-        pos->setPos(
-            pos->x(),
-            pos->y()+5
-        );
-        sprite->setAnimation(6, 4, 100);
-    }
-    if (keystate[SDL_SCANCODE_RIGHT] && !keystate[SDL_SCANCODE_LEFT]){
-        std::cout << "right" << std::endl;
-        pos->setPos(
-            pos->x()+5,
-            pos->y()
-        );
-        sprite->setAnimation(6, 4, 100);
-        sprite->setFlipState(SpriteComponent::FlipState::none);
-    }
-    else if (!keystate[SDL_SCANCODE_RIGHT] && keystate[SDL_SCANCODE_LEFT]){
-        std::cout << "left" << std::endl;
-        pos->setPos(
-            pos->x()-5,
-            pos->y()
-        );
-        sprite->setAnimation(6, 4, 100);
-        sprite->setFlipState(SpriteComponent::FlipState::horizontal);
-    } else if (!keystate[SDL_SCANCODE_UP] && !keystate[SDL_SCANCODE_DOWN] && !keystate[SDL_SCANCODE_RIGHT] && !keystate[SDL_SCANCODE_LEFT]){
-        sprite->setAnimation(3, 0, 100);
-    }
-};
-
 void Game::handleEvents() {
     SDL_Event event;
     SDL_PollEvent(&event);
 
-    const Uint8 *keystate = SDL_GetKeyboardState(NULL);
-    updatePlayerPosition(keystate, *player);
-    
     switch(event.type) {
         // If the user clicks the X button, quit the game
         case SDL_EVENT_QUIT:
@@ -156,7 +103,6 @@ void Game::handleEvents() {
 void Game::update() {
     cnt++;
     manager->update();
-    std::cout << "Player position: " << player->getComponent<PositionComponent>()->x() << ", " << player->getComponent<PositionComponent>()->y() << std::endl;
     std::cout << "Frame: " << cnt << std::endl;
 }
 
